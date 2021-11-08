@@ -39,18 +39,30 @@ neg_df = pd.DataFrame(neg_li, columns=['id', 'sentiment', 'review'])
 ##split pos/neg dataframe to 1:9, 1 for validation, 9 for training
 pos_val = pos_df.sample(frac=0.1)
 pos_train = pos_df.drop(pos_val.index)
+
 neg_val = neg_df.sample(frac=0.1)
 neg_train = neg_df.drop(neg_val.index)
 
-##merge pos and neg for validation = val_df, training = train_df
+##creating subfolders
+os.makedirs("all-reviews/training/pos", exist_ok=True)
+os.makedirs("all-reviews/training/neg", exist_ok=True)
+os.makedirs("all-reviews/validation/pos", exist_ok=True)
+os.makedirs("all-reviews/validation/neg", exist_ok=True)
+
+##writing validation set
+pos_val.to_csv("all-reviews/validation/pos/pos_val.csv", index=False)
+neg_val.to_csv("all-reviews/validation/neg/neg_val.csv", index=False)
+
+##writing training set
+pos_train.to_csv("all-reviews/training/pos/pos_train.csv", index=False)
+neg_train.to_csv("all-reviews/training/neg/neg_train.csv", index=False)
+
+##validation
 val_df = pd.concat([pos_val, neg_val])
 train_df = pd.concat([pos_train, neg_train])
 
-##write these into file
-val_df.to_csv("val.csv", index=False)
-train_df.to_csv("train.csv", index=False)
-
-##validation
+print("pos_val has {} rows, neg_val has {} rows".format(len(pos_val.loc[pos_val['sentiment'] == 1]), len(neg_val.loc[neg_val['sentiment'] == 0])))
+print("pos_train has {} rows, neg_train has {} rows".format(len(pos_train.loc[pos_train['sentiment'] == 1]), len(neg_train.loc[neg_train['sentiment'] == 0])))
 print("val_df has {} rows, {} pos vs {} neg".format(len(val_df), len(val_df.loc[val_df['sentiment'] == 1]), len(val_df.loc[val_df['sentiment'] == 0])))
 print("train_df has {} rows, {} pos vs {} neg".format(len(train_df), len(train_df.loc[train_df['sentiment'] == 1]), len(train_df.loc[train_df['sentiment'] == 0])))
 print("overlapping row : {}".format(len(val_df.merge(train_df, on='id'))))

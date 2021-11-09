@@ -1,6 +1,20 @@
 import pandas as pd
 import os
 import glob
+from nltk.corpus import stopwords
+import re
+
+
+def tokenize(text):
+    """
+    :param text: movie review from a .txt file
+    :return: a list of meaningful words
+    """
+    text = text.lower()
+    clean_words = re.split(r'[^\w]', text)
+    stopwords_en = stopwords.words("english")  # remove stop words using those defined in the NLTK library
+    return [w for w in clean_words if w not in stopwords_en and w != '']
+
 
 #set this to print df
 ##setting folders and files path
@@ -21,7 +35,8 @@ for file_name in pos_file_names:
     file_path = os.path.join(pos_folder, file_name)
     text_file = open(file_path, "r")
     data = text_file.read()
-    pos_li.append([file_name[2:-4], 1, data])
+    clean_data = tokenize(data)
+    pos_li.append([file_name[2:-4], 1, clean_data])
     text_file.close()
 
 ##for each file, read the line, then push [filename, output, line] into a list
@@ -29,7 +44,8 @@ for file_name in neg_file_names:
     file_path = os.path.join(neg_folder, file_name)
     text_file = open(file_path, "r")
     data = text_file.read()
-    neg_li.append([file_name[2:-4], 0, data])
+    clean_data = tokenize(data)
+    neg_li.append([file_name[2:-4], 0, clean_data])
     text_file.close()
 
 ##use the list to create dataframe
@@ -43,19 +59,20 @@ pos_train = pos_df.drop(pos_val.index)
 neg_val = neg_df.sample(frac=0.1)
 neg_train = neg_df.drop(neg_val.index)
 
+'''
 ##creating subfolders
 os.makedirs("all-reviews/training/pos", exist_ok=True)
 os.makedirs("all-reviews/training/neg", exist_ok=True)
 os.makedirs("all-reviews/validation/pos", exist_ok=True)
 os.makedirs("all-reviews/validation/neg", exist_ok=True)
-
+'''
 ##writing validation set
-pos_val.to_csv("all-reviews/validation/pos/pos_val.csv", index=False)
-neg_val.to_csv("all-reviews/validation/neg/neg_val.csv", index=False)
+pos_val.to_csv("pos_val.csv", index=False)
+neg_val.to_csv("neg_val.csv", index=False)
 
 ##writing training set
-pos_train.to_csv("all-reviews/training/pos/pos_train.csv", index=False)
-neg_train.to_csv("all-reviews/training/neg/neg_train.csv", index=False)
+pos_train.to_csv("pos_train.csv", index=False)
+neg_train.to_csv("neg_train.csv", index=False)
 
 ##validation
 val_df = pd.concat([pos_val, neg_val])
@@ -73,3 +90,5 @@ print("overlapping row : {}".format(len(val_df.merge(train_df, on='id'))))
 # print(len(df))
 # frame = pd.concat(li, sort=False, ignore_index=True)
 # len(frame.count())
+
+print(pos_train)

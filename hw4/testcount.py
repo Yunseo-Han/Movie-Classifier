@@ -85,34 +85,59 @@ def count_pos_review_num(csvfile):
     return count
 
 
+def calc_fxy_fx(dictionary, curr_word):
+    fxy = 0
+    fx = 0
+    for word, sentiment in dictionary:
+        if word == curr_word:
+            fx += dictionary[word, sentiment]
+        if sentiment == 1 and word == curr_word:
+            fxy = dictionary[word, sentiment]
+    return fxy, fx
+
+
 def mutual_info(fxy, N, fx, fy):
     a = fxy * N / (fx * fy)
-    m_info = math.log2(a)
+    m_info = math.log(a, 2)
     return m_info
 
 
 def main():
-    file = 'testtrain.csv'
+    file = 'train.csv'
     df = pd.read_csv(file)
     total_review_num = len(df)
     total_pos_num = count_pos_review_num(file)
     total_neg_num = total_review_num - total_pos_num
-    
     unique_words = get_unique_words(file)
-    pairdict = build_freqs(file)
-    print(pairdict)
+    freq_dict = build_freqs(file)
+
+
+    mi_dict = {}
+    for word in unique_words:
+        fxy, fx = calc_fxy_fx(freq_dict, word)
+        if fxy == 0:
+            continue
+        N = total_review_num
+        fy = total_pos_num
+        mi = mutual_info(fxy, N, fx, fy)
+        mi_dict.update({word: mi})
+
+
+    sorted_dict_freq = sorted(mi_dict.items(), key=lambda x: x[1], reverse=True)
+    with open('output.txt', 'w') as f:
+        for key, value in sorted_dict_freq:
+            f.write('%s:%s\n' % (key, value))
+
+
+
 
 
 if __name__ == '__main__':
     main()
 
-'''
-count = 0
-for word, sentiment in pairdict:
-    if sentiment == 0 and word == 'great':
-        count = pairdict[word, sentiment]
-print(count)
-'''
+
+
+
 
 # sorted_dict_freq = sorted(freq.items(), key=lambda x: x[1], reverse=True)
 # sorted_dict_listfreq = sorted(listfreq.items(), key=lambda x: x[1], reverse=True)

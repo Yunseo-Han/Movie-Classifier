@@ -10,6 +10,8 @@ class WordCounter:
         self.pos_dict = {}  # dictionary to map words from all positive reviews and its frequency
         self.neg_dict = {}  # dictionary to map words from all negative reviews and its frequency
         self.vocab = set()  # a set of unique words from training data(both pos and neg).
+        self.pos_vocab = set()
+        self.neg_vocab = set()
 
     @staticmethod
     def text_parser(text):
@@ -28,14 +30,18 @@ class WordCounter:
 
         for row in pos_reader:
             wordlist = self.text_parser(row[2])
-            for word in wordlist:
+            single_review_vocab = set(wordlist)
+            for word in single_review_vocab:
                 self.vocab.add(word)
+                self.pos_vocab.add(word)
                 self.pos_dict[word] = self.pos_dict.get(word, 0) + 1
 
         for row in neg_reader:
             wordlist = self.text_parser(row[2])
-            for word in wordlist:
+            single_review_vocab = set(wordlist)
+            for word in single_review_vocab:
                 self.vocab.add(word)
+                self.neg_vocab.add(word)
                 self.neg_dict[word] = self.neg_dict.get(word, 0) + 1
 
 
@@ -43,4 +49,4 @@ test = WordCounter("./pos_train.csv", "./neg_train.csv")
 test.create_vocab_dict()
 print(test.pos_dict)
 print("****************************************************************************************")
-print(test.pos_dict)
+print(test.neg_dict)

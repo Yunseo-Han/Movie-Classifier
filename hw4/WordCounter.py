@@ -9,19 +9,23 @@ class WordCounter:
         self.neg_file = open(neg_filename)
         self.pos_dict = {}  # dictionary to map words from all positive reviews and its frequency
         self.neg_dict = {}  # dictionary to map words from all negative reviews and its frequency
-        self.vocab = set()  # a set of unique words from training data(both pos and neg).
-        self.pos_vocab = set()
-        self.neg_vocab = set()
+        self.freq_dict = {}  # dictionary to map words from dataset(both pos and neg) and its frequency
+        self.vocab = set()  # a set of unique words from dataset(both pos and neg).
+        self.pos_vocab = set()  # a set of unique words from positive reviews.
+        self.neg_vocab = set()  # a set of unique words from negative reviews.
+        self.pos_review_num = 0  # positive review number
+        self.neg_review_num = 0  # negative review number
 
     @staticmethod
     def text_parser(text):
         parsed = re.split(r'[^\w]', text)
         return [w for w in parsed if w != '']
 
-    def create_vocab_dict(self):
+    def prepare_data(self):
         """
-        Use csv.reader to read files.
-        row[2] corresponds to column['review'].
+        Use csv.reader to read files.  Row[2] corresponds to column['review'].
+        Create vocab set for whole dataset, positive reviews and negative reviews respectively.
+        Count positive review number and negative review number.
         """
         pos_reader = csv.reader(self.pos_file)
         neg_reader = csv.reader(self.neg_file)
@@ -31,22 +35,29 @@ class WordCounter:
         for row in pos_reader:
             wordlist = self.text_parser(row[2])
             single_review_vocab = set(wordlist)
+            self.pos_review_num += 1
             for word in single_review_vocab:
                 self.vocab.add(word)
                 self.pos_vocab.add(word)
                 self.pos_dict[word] = self.pos_dict.get(word, 0) + 1
+                self.freq_dict[word] = self.freq_dict.get(word, 0) + 1
 
         for row in neg_reader:
             wordlist = self.text_parser(row[2])
             single_review_vocab = set(wordlist)
+            self.neg_review_num += 1
             for word in single_review_vocab:
                 self.vocab.add(word)
                 self.neg_vocab.add(word)
                 self.neg_dict[word] = self.neg_dict.get(word, 0) + 1
+                self.freq_dict[word] = self.freq_dict.get(word, 0) + 1
 
 
-test = WordCounter("./pos_train.csv", "./neg_train.csv")
-test.create_vocab_dict()
-print(test.pos_dict)
-print("****************************************************************************************")
-print(test.neg_dict)
+def get_freq(word):
+    pass
+
+test = WordCounter("./try.csv", "./try.csv")
+# test = WordCounter("./pos_train.csv", "./neg_train.csv")
+test.prepare_data()
+
+print(test.freq_dict)

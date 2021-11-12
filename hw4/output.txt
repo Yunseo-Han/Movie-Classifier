@@ -1,0 +1,13 @@
+
+The top 5 positive words:
+P1:  outstanding
+P2:  religion
+P3:  avoids
+P4:  astounding
+P5:  mesmerizing
+The top 5 negative words:
+N1:  ludicrous
+N2:  seagal
+N3:  uninvolving
+N4:  chuckle
+N5:  idiotic

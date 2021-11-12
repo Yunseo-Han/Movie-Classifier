@@ -57,9 +57,7 @@ def build_freqs(csvfile):
     freqs = {}
     data = read_csv(csvfile)
     sentiments = data['sentiment'].tolist()
-    # print(sentiments)
     reviews = convert_reviews_2d_array(csvfile)
-    # print(reviews)
     for sentiment, review in zip(sentiments, reviews):
         single_review_word = set(review)
         for word in single_review_word:
@@ -85,13 +83,27 @@ def count_pos_review_num(csvfile):
     return count
 
 
-def calc_fxy_fx(dictionary, curr_word):
+def calc_fxy_fx(dictionary, curr_word, pos_or_neg):
+    fxy = 0
+    fx = 0
+
+    flag = 1 if pos_or_neg == 'pos' else 0
+
+    for word, sentiment in dictionary:
+        if word == curr_word:
+            fx += dictionary[word, sentiment]
+        if sentiment == flag and word == curr_word:
+            fxy = dictionary[word, sentiment]
+    return fxy, fx
+
+
+def calc_fxy_fx_neg(dictionary, curr_word):
     fxy = 0
     fx = 0
     for word, sentiment in dictionary:
         if word == curr_word:
             fx += dictionary[word, sentiment]
-        if sentiment == 1 and word == curr_word:
+        if sentiment == 0 and word == curr_word:
             fxy = dictionary[word, sentiment]
     return fxy, fx
 
@@ -108,26 +120,48 @@ def main():
     total_review_num = len(df)
     total_pos_num = count_pos_review_num(file)
     total_neg_num = total_review_num - total_pos_num
-    unique_words = get_unique_words(file)
+    vocab = get_unique_words(file)
     freq_dict = build_freqs(file)
 
-
+    '''
     mi_dict = {}
-    for word in unique_words:
-        fxy, fx = calc_fxy_fx(freq_dict, word)
+    for word in vocab:
+        fxy, fx = calc_fxy_fx_pos(freq_dict, word)
         if fxy == 0:
             continue
         N = total_review_num
         fy = total_pos_num
         mi = mutual_info(fxy, N, fx, fy)
         mi_dict.update({word: mi})
+    '''
+    abs_mi = {}
+    for word in vocab:
+        fxy, fx = calc_fxy_fx(freq_dict, word, "pos")
+        if fxy == 0:
+            continue
+        N = total_review_num
+        fy = total_pos_num
+        mi_pos = mutual_info(fxy, N, fx, fy)
+
+        fxy_neg, fx_neg = calc_fxy_fx(freq_dict, word, "neg")
+        if fxy_neg == 0:
+            continue
+        fy = total_neg_num
+        mi_neg = mutual_info(fxy_neg, N, fx_neg, fy)
+        mi = abs(mi_pos - mi_neg)
+        abs_mi.update({word: mi})
+
+    sorted_dict_freq = sorted(abs_mi.items(), key=lambda x: x[1], reverse=True)
+    print(sorted_dict_freq)
 
 
+    '''
     sorted_dict_freq = sorted(mi_dict.items(), key=lambda x: x[1], reverse=True)
+    
     with open('output.txt', 'w') as f:
         for key, value in sorted_dict_freq:
             f.write('%s:%s\n' % (key, value))
-
+    '''
 
 
 

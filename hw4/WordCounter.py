@@ -1,57 +1,44 @@
 import csv
 import re
-import copy
-from itertools import islice
 
 
 class WordCounter:
 
-    def __init__(self, posFilename, negFilename):
-        self.posfile = open(posFilename)
-        self.negfile = open(negFilename)
-        self.posdict = {}
-        self.negdict = {}
+    def __init__(self, pos_filename, neg_filename):
+        self.pos_file = open(pos_filename)
+        self.neg_file = open(neg_filename)
+        self.pos_dict = {}
+        self.neg_dict = {}
+        self.vocab = set()
 
-    def createDict(self):
-        posReader = csv.reader(self.posfile)
-        negReader = csv.reader(self.negfile)
-
-        words = []
-        for row in islice(posReader, 2, None):
-            # do something
-            words += self.textParser(row[2])
-        for row in islice(negReader, 2, None):
-            # do something
-            words += self.textParser(row[2])
-
-        for word in words:
-            self.posdict[word] = 0
-        self.negdict = copy.deepcopy(self.posdict)
-
-    def textParser(self, text):
+    @staticmethod
+    def text_parser(text):
         parsed = re.split(r'[^\w]', text)
-        return parsed
+        return [w for w in parsed if w != '']
 
-    def wordCounter(self):
-        posReader = csv.reader(self.posfile)
-        negReader = csv.reader(self.negfile)
+    def create_vocab_dict(self):
+        pos_reader = csv.reader(self.pos_file)
+        neg_reader = csv.reader(self.neg_file)
+        next(pos_reader)
+        next(neg_reader)
 
-        for row in islice(posReader, 2, None):
-            parsed = self.textParser(row[2])
-            for word in parsed:
-                if self.posdict.has_key(word):
-                    self.posdict[word] += 1
+        for row in pos_reader:
+            wordlist = self.text_parser(row[2])
+            for word in wordlist:
+                self.vocab.add(word)
+                self.pos_dict[word] = self.pos_dict.get(word, 0) + 1
 
-        for row in islice(negReader, 2, None):
-            parsed = self.textParser(row[2])
-            for word in parsed:
-                if self.negdict.has_key(word):
-                    self.negdict[word] += 1
+        for row in neg_reader:
+            wordlist = self.text_parser(row[2])
+            for word in wordlist:
+                self.vocab.add(word)
+                self.neg_dict[word] = self.neg_dict.get(word, 0) + 1
+
+
 
 
 test = WordCounter("./pos_train.csv", "./neg_train.csv")
-test.createDict()
-print(test.posdict)
+test.create_vocab_dict()
+print(test.pos_dict)
 print("****************************************************************************************")
-test.wordCounter()
-print(test.posdict)
+print(test.pos_dict)

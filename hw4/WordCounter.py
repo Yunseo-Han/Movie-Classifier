@@ -7,9 +7,9 @@ class WordCounter:
     def __init__(self, pos_filename, neg_filename):
         self.pos_file = open(pos_filename)
         self.neg_file = open(neg_filename)
-        self.pos_dict = {}
-        self.neg_dict = {}
-        self.vocab = set()
+        self.pos_dict = {}  # dictionary to map word from all positive reviews and its frequency
+        self.neg_dict = {}  # dictionary to map word from all negative reviews and its frequency
+        self.vocab = set()  # a set of unique words from training data(both pos and neg).
 
     @staticmethod
     def text_parser(text):
@@ -33,8 +33,6 @@ class WordCounter:
             for word in wordlist:
                 self.vocab.add(word)
                 self.neg_dict[word] = self.neg_dict.get(word, 0) + 1
-
-
 
 
 test = WordCounter("./pos_train.csv", "./neg_train.csv")

@@ -7,8 +7,8 @@ class WordCounter:
     def __init__(self, pos_filename, neg_filename):
         self.pos_file = open(pos_filename)
         self.neg_file = open(neg_filename)
-        self.pos_dict = {}  # dictionary to map word from all positive reviews and its frequency
-        self.neg_dict = {}  # dictionary to map word from all negative reviews and its frequency
+        self.pos_dict = {}  # dictionary to map words from all positive reviews and its frequency
+        self.neg_dict = {}  # dictionary to map words from all negative reviews and its frequency
         self.vocab = set()  # a set of unique words from training data(both pos and neg).
 
     @staticmethod
@@ -17,6 +17,10 @@ class WordCounter:
         return [w for w in parsed if w != '']
 
     def create_vocab_dict(self):
+        """
+        Use csv.reader to read files.
+        row[2] corresponds to column['review'].
+        """
         pos_reader = csv.reader(self.pos_file)
         neg_reader = csv.reader(self.neg_file)
         next(pos_reader)

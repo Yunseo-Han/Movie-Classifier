@@ -1,4 +1,5 @@
 import csv
+import math
 import re
 
 
@@ -26,6 +27,7 @@ class WordCounter:
         Use csv.reader to read files.  Row[2] corresponds to column['review'].
         Create vocab set for whole dataset, positive reviews and negative reviews respectively.
         Count positive review number and negative review number.
+        Create dictionaries mapping word to its frequency.
         """
         pos_reader = csv.reader(self.pos_file)
         neg_reader = csv.reader(self.neg_file)
@@ -53,11 +55,31 @@ class WordCounter:
                 self.freq_dict[word] = self.freq_dict.get(word, 0) + 1
 
 
-def get_freq(word):
-    pass
+def mutual_info(_fxy, _N, _fx, _fy):
+    a = _fxy * _N / (_fx * _fy)
+    m_info = math.log(a, 2)
+    return m_info
 
-test = WordCounter("./try.csv", "./try.csv")
-# test = WordCounter("./pos_train.csv", "./neg_train.csv")
+
+# test = WordCounter("./try.csv", "./try.csv")
+test = WordCounter("./pos_train.csv", "./neg_train.csv")
 test.prepare_data()
 
-print(test.freq_dict)
+mi_dict = {}
+for word in test.vocab:
+    if test.pos_dict.get(word) == None:
+        continue
+    else:
+        fxy = test.pos_dict.get(word)
+
+    N = test.neg_review_num + test.pos_review_num
+    fx = test.freq_dict.get(word)
+    fy = test.pos_review_num
+    # print(f'fxy {fxy}  fx  {fx}  fy {fy}  N {N}')
+    mi = mutual_info(fxy, N, fx, fy)
+    mi_dict.update({word: mi})
+
+sorted_mi_dict = sorted(mi_dict.items(), key=lambda x: x[1], reverse=True)
+print(sorted_mi_dict)
+
+

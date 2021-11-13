@@ -49,15 +49,16 @@ def main():
         if test.neg_dict.get(word) is None:
             continue
         else:
-            ##fxy but for negative
-            fxyn = test.neg_dict.get(word)
+            # fxy but for negative
+            fxy_n = test.neg_dict.get(word)
 
         N = test.neg_review_num + test.pos_review_num
         fx = test.freq_dict.get(word)
         fy = test.pos_review_num
+        fy_n = test.neg_review_num
 
         mi_pos = mutual_info(fxy, N, fx, fy)
-        mi_neg = mutual_info(fxyn, N, fx, fy)
+        mi_neg = mutual_info(fxy_n, N, fx, fy_n)
         mi_dict_pos.update({word: mi_pos})
         mi_dict_neg.update({word: mi_neg})
 

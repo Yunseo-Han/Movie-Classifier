@@ -39,28 +39,37 @@ def main():
     test.prepare_data()
 
     mi_dict_pos = {}
+    mi_dict_neg = {}
     for word in test.vocab:
         if test.pos_dict.get(word) is None:
             continue
         else:
             fxy = test.pos_dict.get(word)
 
+        if test.neg_dict.get(word) is None:
+            continue
+        else:
+            ##fxy but for negative
+            fxyn = test.neg_dict.get(word)
+
         N = test.neg_review_num + test.pos_review_num
         fx = test.freq_dict.get(word)
         fy = test.pos_review_num
-        mi = mutual_info(fxy, N, fx, fy)
-        mi_dict_pos.update({word: mi})
+
+        mi_pos = mutual_info(fxy, N, fx, fy)
+        mi_neg = mutual_info(fxyn, N, fx, fy)
+        mi_dict_pos.update({word: mi_pos})
+        mi_dict_neg.update({word: mi_neg})
 
     # sort words based on MI value
     mi_list_pos = sorted(mi_dict_pos.items(), key=lambda x: x[1], reverse=True)
-    # filter out the words with MI = 1.0
-    mi_list = list(filter(lambda x: x[1]<1, mi_list_pos))
+    mi_list_neg = sorted(mi_dict_neg.items(), key=lambda x: x[1], reverse=True)
 
-    top_pos = mi_list[:5]
+    top_pos = mi_list_pos[:5]
     print_result(top_pos, 'positive')
     output_result(top_pos, 'positive')
 
-    top_neg = mi_list[-5:]
+    top_neg = mi_list_neg[:5]
     print_result(top_neg, 'negative')
     output_result(top_neg, 'negative')
 

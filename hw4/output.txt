@@ -11,3 +11,27 @@ N2:  seagal
 N3:  uninvolving
 N4:  chuckle
 N5:  idiotic
+The top 5 positive words:
+P1:  gripping
+P2:  outstanding
+P3:  astounding
+P4:  affecting
+P5:  avoids
+The top 5 negative words:
+N1:  sucks
+N2:  ludicrous
+N3:  schumacher
+N4:  inject
+N5:  idiotic
+The top 5 positive words:
+P1:  astounding
+P2:  outstanding
+P3:  avoids
+P4:  fascination
+P5:  animators
+The top 5 negative words:
+N1:  sucks
+N2:  unintentional
+N3:  ludicrous
+N4:  atrocious
+N5:  idiotic

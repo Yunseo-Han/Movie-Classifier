@@ -2,6 +2,9 @@ import math
 from wordcounter import WordCounter
 from preprocess import pre_process
 
+import nltk
+nltk.download('stopwords')
+
 
 def mutual_info(_fxy, _N, _fx, _fy):
     """

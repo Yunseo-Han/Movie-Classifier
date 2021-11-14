@@ -16,12 +16,12 @@ def tokenize(text):
     return [w for w in clean_words if w not in stopwords_en and w != '']
 
 
-def pre_process():
+def pre_process(reviews_path):
     #set this to print df
     ##setting folders and files path
-    pos_folder = os.path.join(os.getcwd(), "Movie_Reviews", "pos")
+    pos_folder = os.path.join(reviews_path, "pos")
     pos_files = os.path.join(pos_folder, "*.txt")
-    neg_folder = os.path.join(os.getcwd(), "Movie_Reviews", "neg")
+    neg_folder = os.path.join(reviews_path,"neg")
     neg_files = os.path.join(neg_folder, "*.txt")
 
     ##getting a list of name for both pos and neg folder

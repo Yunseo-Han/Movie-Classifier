@@ -33,8 +33,10 @@ def output_result(alist, pos_or_neg):
 
 
 def main():
-    reviews_path = input("Enter your Movie_Reviews path, for example D:\IdeaProjects\Movie-Classifier\hw4\Movie_Reviews")
-    pre_process(reviews_path)
+    print("Please enter your review path when prompt, for example D:\IdeaProjects\Movie-Classifier\hw4\Movie_Reviews\pos")
+    pos = input("Enter your Positive Reviews path : ")
+    neg = input("Enter your Negative Reviews path : ")
+    pre_process(pos, neg)
 
     test = WordCounter("./pos_train.csv", "./neg_train.csv")
     test.prepare_data()

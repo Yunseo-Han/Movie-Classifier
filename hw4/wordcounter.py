@@ -30,6 +30,7 @@ class WordCounter:
         """
         pos_reader = csv.reader(self.pos_file)
         neg_reader = csv.reader(self.neg_file)
+        ## skipping header
         next(pos_reader)
         next(neg_reader)
 
